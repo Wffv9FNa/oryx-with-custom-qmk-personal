@@ -13,3 +13,4 @@ CAPS_WORD_ENABLE = yes
 # | Custom QMK Code |
 # +-----------------+
 KEY_OVERRIDE_ENABLE = yes
+AUDIO_ENABLE = yes
