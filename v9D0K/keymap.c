@@ -84,16 +84,6 @@ bool rgb_matrix_indicators_user(void) {
       return false;
   }
   if (keyboard_config.disable_layer_led) { return false; }
-
-  // Check Caps Lock state first
-  if (host_keyboard_led_state().caps_lock) {
-    for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
-      rgb_matrix_set_color(i, 255, 0, 0);  // Full red when Caps Lock is on
-    }
-    return true;
-  }
-
-  // Normal layer-based lighting when Caps Lock is off
   switch (biton32(layer_state)) {
     case 0:
       set_layer_color(0);
