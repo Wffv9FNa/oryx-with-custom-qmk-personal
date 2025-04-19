@@ -5,8 +5,9 @@
 #define MOON_LED_LEVEL LED_LEVEL
 #define ML_SAFE_RANGE SAFE_RANGE
 
-// Define the startup sound
+// Define the sounds
 float startup_sound[][2] = SONG(E__NOTE(_E6), E__NOTE(_A6), ED_NOTE(_E7));
+float goodbye_sound[][2] = SONG(E__NOTE(_E7), E__NOTE(_A6), ED_NOTE(_E6));
 
 enum custom_keycodes {
   RGB_SLD = ML_SAFE_RANGE,
@@ -117,12 +118,26 @@ bool rgb_matrix_indicators_user(void) {
   return true;
 }
 
+// Track Caps Lock state
+static bool caps_lock_on = false;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case KC_CAPS:
         if (record->event.pressed) {
-            // Play startup sound when Caps Lock is pressed
-            PLAY_SONG(startup_sound);
+            // Check current Caps Lock state and toggle it
+            bool new_caps_state = !host_keyboard_led_state().caps_lock;
+
+            if (new_caps_state) {
+                // Caps Lock is being turned ON
+                PLAY_SONG(startup_sound);
+            } else {
+                // Caps Lock is being turned OFF
+                PLAY_SONG(goodbye_sound);
+            }
+
+            // Update our tracking variable
+            caps_lock_on = new_caps_state;
         }
         return true; // Let QMK handle the actual Caps Lock toggling
 
