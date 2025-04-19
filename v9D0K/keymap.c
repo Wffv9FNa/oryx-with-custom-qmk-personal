@@ -84,23 +84,31 @@ bool rgb_matrix_indicators_user(void) {
       return false;
   }
   if (keyboard_config.disable_layer_led) { return false; }
-  switch (biton32(layer_state)) {
-    case 0:
-      set_layer_color(0);
+
+  // Check if Caps Lock is on
+  if (host_keyboard_led_state().caps_lock) {
+    // Set all keys to red when Caps Lock is on
+    rgb_matrix_set_color_all(255, 0, 0);
+  } else {
+    // Normal layer-based lighting when Caps Lock is off
+    switch (biton32(layer_state)) {
+      case 0:
+        set_layer_color(0);
+        break;
+      case 1:
+        set_layer_color(1);
+        break;
+      case 2:
+        set_layer_color(2);
+        break;
+      case 3:
+        set_layer_color(3);
+        break;
+     default:
+      if (rgb_matrix_get_flags() == LED_FLAG_NONE)
+        rgb_matrix_set_color_all(0, 0, 0);
       break;
-    case 1:
-      set_layer_color(1);
-      break;
-    case 2:
-      set_layer_color(2);
-      break;
-    case 3:
-      set_layer_color(3);
-      break;
-   default:
-    if (rgb_matrix_get_flags() == LED_FLAG_NONE)
-      rgb_matrix_set_color_all(0, 0, 0);
-    break;
+    }
   }
   return true;
 }
