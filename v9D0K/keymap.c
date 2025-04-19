@@ -138,3 +138,34 @@ const key_override_t **key_overrides = (const key_override_t *[]){
 	&f13_to_f14_override,
 	NULL
 };
+
+// Caps Lock indicator function
+bool led_update_user(led_t led_state) {
+    if (led_state.caps_lock) {
+        // Set all LEDs to red when Caps Lock is on
+        for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+            rgb_matrix_set_color(i, 255, 0, 0);  // Full red, no green, no blue
+        }
+    } else {
+        // Return to the normal layer-based lighting when Caps Lock is off
+        switch (biton32(layer_state)) {
+            case 0:
+                set_layer_color(0);
+                break;
+            case 1:
+                set_layer_color(1);
+                break;
+            case 2:
+                set_layer_color(2);
+                break;
+            case 3:
+                set_layer_color(3);
+                break;
+            default:
+                if (rgb_matrix_get_flags() == LED_FLAG_NONE)
+                    rgb_matrix_set_color_all(0, 0, 0);
+                break;
+        }
+    }
+    return true;  // Continue with default LED processing
+}
